@@ -1,13 +1,20 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
+# dependencias (versiones fijadas en requirements.txt)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY Tienda_online/ Tienda_online/
+# codigo fuente de la Practica 2
+COPY src/ src/
 
-WORKDIR /app/Tienda_online
+# usuario sin privilegios: evita correr la app como root dentro del contenedor
+RUN useradd --create-home appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
+WORKDIR /app/src
 
 EXPOSE 8000
 
